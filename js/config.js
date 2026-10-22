@@ -27,15 +27,15 @@ window.ZR = {
     { id: "truck", label: "Truck / 3rd row / Van", short: "Truck / Van" },
   ],
 
-  /* PACKAGES: CONFIRM ALL PRICES WITH ZR BEFORE LAUNCH.
-     His flyers say "prices start at $150"; the rest are typical
-     Central Florida mobile-detailing prices used as a starting point. */
+  /* PACKAGES
+     Confirmed by ZR (2026-10-22), sedan: Exterior $100, Interior $150, Full Detail $250.
+     Still to confirm: the SUV and truck prices (2nd and 3rd numbers) and the Gold package. */
   packages: [
     {
       id: "exterior",
       name: "Exterior Detail",
       tagline: "That fresh-off-the-lot gloss.",
-      prices: [150, 175, 200],
+      prices: [100, 125, 150],
       duration: "1.5 – 2 hrs",
       features: [
         "Foam pre-wash + two-bucket hand wash",
@@ -50,7 +50,7 @@ window.ZR = {
       id: "interior",
       name: "Interior Detail",
       tagline: "Clean you can smell.",
-      prices: [175, 200, 230],
+      prices: [150, 175, 200],
       duration: "2 – 3 hrs",
       features: [
         "Full vacuum: seats, carpets, trunk",

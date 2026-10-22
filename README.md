@@ -15,7 +15,7 @@ Website for **zrmobiledetailing.com**. Plain HTML, CSS and JavaScript: no build 
 
 ## Before going live: confirm with ZR
 
-1. **All prices** in `js/config.js`. His flyer says "prices start at $150"; the rest are typical Central Florida prices to start from.
+1. **All prices** in `js/config.js`. Exterior $100, Interior $150 and Full Detail $250 (sedan) are confirmed. Still to confirm: SUV/truck prices, the Gold package and add-ons.
 2. **Hours** (currently "7 days, 7 AM – 7 PM") in `js/config.js` and in `index.html` (search `openingHoursSpecification`).
 3. **FAQ answers** in `index.html`: does he bring his own water and power? Which payment methods (cash, card, Zelle, Cash App, Apple Pay)? Rain policy?
 4. **Reviews:** two are real Instagram comments. The three marked "Sample" must be replaced with real Google reviews (or deleted). Never publish made-up reviews.
