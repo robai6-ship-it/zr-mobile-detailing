@@ -32,9 +32,7 @@
     if (dock) {
       const r = book?.getBoundingClientRect();
       const inBook = r && r.top < innerHeight * 0.6 && r.bottom > innerHeight * 0.4;
-      const zr = $("#zoom")?.getBoundingClientRect();
-      const inZoom = zr && zr.top < innerHeight && zr.bottom > innerHeight * 0.9;
-      dock.classList.toggle("is-on", scrollY > innerHeight * 0.6 && !inBook && !inZoom);
+      dock.classList.toggle("is-on", scrollY > innerHeight * 0.6 && !inBook);
     }
   };
   addEventListener("scroll", onScroll, { passive: true });
@@ -49,41 +47,43 @@
     io.observe(el);
   });
 
-  /* ---------- Hero zoom card (scroll-driven) ---------- */
-  const zoom = $("#zoom");
-  const card = $("#zoomCard");
-  if (zoom && card) {
-    const frame = $("#zoomFrame"), ext = $(".zoom-ext", card), int = $(".zoom-int", card), flash = $(".zoom-flash", card);
-    const caps = $$(".zoom-caption > div", card), chips = $$(".zoom-steps span", card);
-    let last = -1, ticking = false;
-    const render = () => {
-      ticking = false;
-      const r = zoom.getBoundingClientRect();
-      const total = zoom.offsetHeight - innerHeight;
-      const p = reduced ? 1 : clamp(-r.top / total);
-      if (Math.abs(p - last) < 0.0005) return;
-      last = p;
-      const grow = ease(clamp(p / 0.22));
-      const vw = innerWidth, vh = innerHeight;
-      const ix0 = Math.max(16, (vw - 1180) / 2), iy0 = Math.max(12, (vh - Math.min(vh * 0.72, 680)) / 2);
-      const vars = { "--ix": ix0 * (1 - grow) + "px", "--iy": iy0 * (1 - grow) + "px", "--r": 30 * (1 - grow) + "px", "--p": p.toFixed(4) };
-      for (const k in vars) { card.style.setProperty(k, vars[k]); frame.style.setProperty(k, vars[k]); }
-      frame.style.opacity = (1 - grow).toFixed(3);
-      const z = ease(clamp((p - 0.08) / 0.5));
-      ext.style.transform = `scale(${(1 + z * 1.5).toFixed(4)})`;
-      ext.style.opacity = (1 - clamp((p - 0.5) / 0.12)).toFixed(3);
-      const io2 = clamp((p - 0.5) / 0.12);
-      int.style.opacity = io2.toFixed(3);
-      int.style.transform = `scale(${(1.25 - 0.25 * ease(clamp((p - 0.5) / 0.45))).toFixed(4)})`;
-      flash.style.opacity = (Math.max(0, 1 - Math.abs(p - 0.56) / 0.07) * 0.6).toFixed(3);
-      const idx = p < 0.16 ? 0 : p < 0.42 ? 1 : p < 0.68 ? 2 : 3;
-      caps.forEach((c, i) => c.classList.toggle("is-on", i === idx));
-      chips.forEach((c, i) => c.classList.toggle("is-on", i === idx));
+  /* ---------- Showroom card: wipe between exterior and interior ---------- */
+  const sr = $("#srCard");
+  if (sr) {
+    const slides = $$(".sr-slide", sr), caps = $$(".sr-caption > div", sr), tabs = $$(".sr-tabs button", sr), edge = $(".sr-edge", sr);
+    const DUR = 6000;
+    sr.style.setProperty("--dur", DUR + "ms");
+    let cur = 0, timer = null, busy = false, visible = true;
+    const show = (n) => {
+      if (n === cur || busy) return;
+      busy = true;
+      const next = slides[n];
+      next.classList.add("is-in");
+      if (!reduced) { edge.classList.remove("is-run"); void edge.offsetWidth; edge.classList.add("is-run"); }
+      caps.forEach((c, i) => c.classList.toggle("is-on", i === n));
+      tabs.forEach((t, i) => t.setAttribute("aria-selected", i === n));
+      setTimeout(() => {
+        slides[cur].classList.remove("is-on");
+        next.classList.remove("is-in"); next.classList.add("is-on");
+        cur = n; busy = false;
+      }, reduced ? 0 : 1150);
+      schedule();
     };
-    const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(render); } };
-    addEventListener("scroll", req, { passive: true });
-    addEventListener("resize", () => { last = -1; req(); });
-    render();
+    const schedule = () => { clearTimeout(timer); if (!reduced && visible) timer = setTimeout(() => show((cur + 1) % slides.length), DUR); };
+    tabs.forEach((t, i) => t.addEventListener("click", () => show(i)));
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; sr.classList.toggle("is-paused", !visible); visible ? schedule() : clearTimeout(timer); }).observe(sr);
+    schedule();
+
+    // Gentle tilt + spotlight following the pointer (mouse only)
+    if (!reduced && matchMedia("(hover: hover)").matches) {
+      sr.addEventListener("pointermove", (e) => {
+        const r = sr.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        sr.style.setProperty("--mx", x * 100 + "%"); sr.style.setProperty("--my", y * 100 + "%");
+        sr.style.setProperty("--ry", ((x - 0.5) * 4).toFixed(2) + "deg"); sr.style.setProperty("--rx", ((0.5 - y) * 3).toFixed(2) + "deg");
+      });
+      sr.addEventListener("pointerleave", () => { sr.style.setProperty("--rx", "0deg"); sr.style.setProperty("--ry", "0deg"); });
+    }
   }
 
   /* ---------- Packages ---------- */

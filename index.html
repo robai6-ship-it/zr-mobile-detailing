@@ -138,26 +138,35 @@
       </div>
     </div>
 
-    <!-- Mercury-style card: exterior → zoom → clean interior -->
-    <div class="zoom" id="zoom">
-      <div class="zoom-sticky">
-        <div class="zoom-card" id="zoomCard">
-          <picture><source media="(max-width: 700px)" srcset="images/hero-exterior-m.webp"><img class="zoom-ext" src="images/hero-exterior.webp" alt="Black luxury car under garage lights" width="2400" height="1500"></picture>
-          <picture><source media="(max-width: 700px)" srcset="images/hero-interior-m.webp"><img class="zoom-int" src="images/hero-interior.webp" alt="Spotless black leather interior after a ZR interior detail" width="2400" height="1500" loading="lazy"></picture>
-          <div class="zoom-flash"></div>
-          <div class="zoom-shade"></div>
-          <div class="zoom-progress"></div>
-          <div class="zoom-ui">
-            <div class="zoom-caption" aria-live="polite">
-              <div class="is-on"><span class="tag">Step 1 · Arrival</span><h3>We pull up to your driveway with everything we need.</h3></div>
-              <div><span class="tag">Step 2 · Exterior</span><h3>Foam, hand wash, decon. Every panel, every wheel.</h3></div>
-              <div><span class="tag">Step 3 · Interior</span><h3>Then we step inside. Vacuum, steam, extract, condition.</h3></div>
-              <div><span class="tag">Step 4 · The result</span><h3 class="display" style="font-style:italic">That new-car feeling, back again.</h3></div>
+    <!-- Showroom card: light sweep, tilt, exterior/interior wipe -->
+    <div class="wrap showroom reveal">
+      <div class="sr-stage" id="srStage">
+        <div class="sr-card" id="srCard">
+          <div class="sr-slide is-on">
+            <picture><source media="(max-width: 700px)" srcset="images/hero-exterior-m.webp"><img class="sr-ext" src="images/hero-exterior.webp" alt="Black luxury car under showroom lights" width="2400" height="1500" fetchpriority="high"></picture>
+          </div>
+          <div class="sr-slide">
+            <picture><source media="(max-width: 700px)" srcset="images/hero-interior-m.webp"><img src="images/hero-interior.webp" alt="Spotless black leather interior after a ZR interior detail" width="2400" height="1500" loading="lazy"></picture>
+          </div>
+          <div class="sr-edge" aria-hidden="true"></div>
+          <div class="sr-beam" aria-hidden="true"></div>
+          <div class="sr-spot" aria-hidden="true"></div>
+          <div class="sr-shade" aria-hidden="true"></div>
+
+          <div class="sr-chip sr-tl"><svg><use href="#i-shield"/></svg>Licensed &amp; insured</div>
+          <div class="sr-chip sr-tr"><span class="muted">From</span> <b class="gold-text">$100</b></div>
+
+          <div class="sr-ui">
+            <div class="sr-caption" aria-live="polite">
+              <div class="is-on"><span class="tag">Exterior</span><h3>Hand-washed, decontaminated, sealed. <span class="display gold-text" style="font-style:italic">Mirror finish.</span></h3></div>
+              <div><span class="tag">Interior</span><h3>Vacuumed, steamed, conditioned. <span class="display gold-text" style="font-style:italic">New-car feel.</span></h3></div>
             </div>
-            <div class="zoom-steps" aria-hidden="true"><span class="is-on">Arrive</span><span>Exterior</span><span>Interior</span><span>Done</span></div>
+            <div class="sr-tabs" role="tablist" aria-label="Show">
+              <button role="tab" aria-selected="true">Exterior<i></i></button>
+              <button role="tab" aria-selected="false">Interior<i></i></button>
+            </div>
           </div>
         </div>
-        <div class="zoom-frame" id="zoomFrame"></div>
       </div>
     </div>
   </section>
