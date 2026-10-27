@@ -17,6 +17,7 @@ window.ZR = {
     instagramHandle: "@zrdetail",
     city: "Kissimmee, FL",
     hours: "7 days a week · 7:00 AM – 7:00 PM", // CONFIRM with ZR
+    closeHour: 19,                // 7 PM: the booking calendar hides start times that would run past this
     googleReviewUrl: "",          // paste the Google "Ask for reviews" link here once the Google Business Profile is live
   },
 
@@ -37,6 +38,7 @@ window.ZR = {
       tagline: "That fresh-off-the-lot gloss.",
       prices: [100, 125, 150],
       duration: "1.5 – 2 hrs",
+      hours: 1.5,                 // shortest time it takes; used to hide late start times
       features: [
         "Foam pre-wash + two-bucket hand wash",
         "Wheels, tires & wheel wells deep-cleaned",
@@ -52,6 +54,7 @@ window.ZR = {
       tagline: "Clean you can smell.",
       prices: [150, 175, 200],
       duration: "2 – 3 hrs",
+      hours: 2,
       features: [
         "Full vacuum: seats, carpets, trunk",
         "Dash, console, vents & cup holders",
@@ -67,6 +70,7 @@ window.ZR = {
       tagline: "Inside and out, in one visit.",
       prices: [250, 290, 330],
       duration: "3 – 4.5 hrs",
+      hours: 3,
       badge: "Most popular",
       features: [
         "Everything in Exterior Detail",
@@ -82,6 +86,7 @@ window.ZR = {
       tagline: "The full showroom treatment.",
       prices: [399, 449, 499],
       duration: "5 – 7 hrs",
+      hours: 5,
       badge: "Best value",
       features: [
         "Everything in Full Detail",
@@ -95,38 +100,47 @@ window.ZR = {
     },
   ],
 
-  // Premium services (priced after seeing the car).
+  /* Premium services (priced after seeing the car).
+     The "from" ranges are typical Central Florida prices, NOT confirmed by ZR yet. CONFIRM. */
   premium: [
     {
       id: "correction",
       name: "Paint Correction",
-      from: "Custom quote",
+      from: "$350 – $900",
+      hours: 4,
       text: "Machine polishing that removes swirl marks, light scratches and dull, oxidized paint from the Florida sun. One-step enhancement or two-step correction.",
     },
     {
       id: "ceramic",
       name: "Ceramic Coating",
-      from: "Custom quote",
+      from: "$700 – $1,500",
+      hours: 6,
       text: "A hard, glossy layer bonded to your paint. Water beads off, bugs and bird droppings wipe away, and UV fading slows down. Includes decontamination and prep.",
     },
     {
       id: "fleet",
       name: "Fleet & Business",
       from: "Volume pricing",
+      hours: 0,
       text: "Work trucks, dealership lots, rental and Turo hosts, office parking lots. Scheduled on a recurring basis so your vehicles always look the part.",
     },
   ],
 
+  /* ADD-ONS. "includedIn" = packages that already include it (shown as "Included" in booking).
+     Prices CONFIRM with ZR. */
   addons: [
-    { id: "engine",    name: "Engine bay cleaning",        price: 50 },
+    { id: "engine",    name: "Engine bay cleaning",        price: 50, includedIn: ["gold"] },
     { id: "pet",       name: "Pet hair removal",           price: 45, note: "from" },
-    { id: "shampoo",   name: "Seat & carpet shampoo",      price: 75 },
+    { id: "shampoo",   name: "Seat & carpet shampoo",      price: 75, includedIn: ["gold"] },
     { id: "odor",      name: "Odor elimination (ozone)",   price: 65 },
-    { id: "headlight", name: "Headlight restoration",      price: 80 },
-    { id: "clay",      name: "Clay bar + sealant",         price: 75 },
+    { id: "headlight", name: "Headlight restoration",      price: 80, detail: "Full sand, polish and UV seal for yellow, foggy lenses" },
+    { id: "clay",      name: "Clay bar + sealant",         price: 75, includedIn: ["gold"] },
     { id: "leather",   name: "Leather deep conditioning",  price: 40 },
     { id: "trim",      name: "Plastic trim restoration",   price: 45 },
   ],
+
+  // Maintenance plans. CONFIRM the discounts with ZR.
+  maintenance: "Maintenance plans: after your first detail, repeat visits every 2 weeks save 15% and every 4 weeks save 10%.",
 
   // Shown in the online booking calendar. Times are customer-requested; ZR confirms.
   timeSlots: ["8:00 AM", "9:30 AM", "11:00 AM", "12:30 PM", "2:00 PM", "3:30 PM", "5:00 PM"],
@@ -139,18 +153,10 @@ window.ZR = {
   ],
 
   /* REVIEWS
-     The first two are real comments left on @zrdetail's Instagram.
-     Entries with  sample: true  show a "Sample" tag. Replace them with real
-     Google reviews (copy the customer's words exactly, with permission) and
-     delete the  sample: true  line. Never publish made-up reviews. */
-  reviews: [
-    { name: "Daniel G.", source: "Instagram", stars: 5, text: "Great job guys 💪" },
-    { name: "Amo Bakery", source: "Instagram", stars: 5, text: "👏👏👏" },
-    { name: "Customer name", source: "Google", stars: 5, sample: true,
-      text: "Paste a real Google review here. Owners love hearing how the car looked and how easy it was to have someone come to their home." },
-    { name: "Customer name", source: "Google", stars: 5, sample: true,
-      text: "Paste a real Google review here. Mention the service and the neighborhood if the customer did (Celebration, St. Cloud, etc.)." },
-    { name: "Customer name", source: "Google", stars: 5, sample: true,
-      text: "Paste a real Google review here." },
-  ],
+     The Reviews section stays hidden until this list has at least one review.
+     Only add real reviews (Google, Facebook, Yelp), copied word for word with the
+     customer's permission, and the star rating they actually gave. Example:
+       { name: "Maria L.", source: "Google", stars: 5, text: "Exactly what they say..." },
+     Never publish made-up or "sample" reviews. */
+  reviews: [],
 };

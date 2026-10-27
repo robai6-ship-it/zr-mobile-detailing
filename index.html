@@ -71,7 +71,7 @@
 </svg>
 
 <div class="announce">
-  <b>Same-day appointments</b> often available · Kissimmee &amp; Central Florida · <a href="#book">Book online →</a>
+  <b>Need it today?</b> Same-day is by call or text only: <a data-tel href="tel:+19519070723">(951) 907-0723</a> · <a href="#book">Book ahead online →</a>
 </div>
 
 <header class="nav" id="nav">
@@ -181,7 +181,7 @@
         <li><svg><use href="#i-spark"/></svg>Premium pro-grade products</li>
         <li><svg><use href="#i-check"/></svg>Satisfaction guaranteed</li>
         <li><svg><use href="#i-sun"/></svg>Built for Florida sun, sand &amp; lovebugs</li>
-        <li><svg><use href="#i-cal"/></svg>Same-day availability</li>
+        <li><svg><use href="#i-cal"/></svg>Same-day by call or text</li>
       </ul>
       <ul aria-hidden="true">
         <li><svg><use href="#i-truck"/></svg>100% mobile: home, office, condo</li>
@@ -190,7 +190,7 @@
         <li><svg><use href="#i-spark"/></svg>Premium pro-grade products</li>
         <li><svg><use href="#i-check"/></svg>Satisfaction guaranteed</li>
         <li><svg><use href="#i-sun"/></svg>Built for Florida sun, sand &amp; lovebugs</li>
-        <li><svg><use href="#i-cal"/></svg>Same-day availability</li>
+        <li><svg><use href="#i-cal"/></svg>Same-day by call or text</li>
       </ul>
     </div>
   </div>
@@ -224,7 +224,8 @@
       <div class="addons reveal">
         <h3>Add-ons</h3>
         <div class="addon-list" id="addons"></div>
-        <p class="fine">Maintenance plans: keep it clean every 2 or 4 weeks and save on every visit. Ask when you book.</p>
+        <p class="fine">The <b>ZR Gold Package</b> already includes engine bay cleaning, clay bar + sealant and shampoo, so you don't pay for those twice. Its headlight touch-up is a quick polish; <b>Headlight restoration</b> is the full sand, polish and UV seal for yellow, foggy lenses.</p>
+        <p class="fine" id="maintNote">Maintenance plans: keep it clean every 2 or 4 weeks and save on every visit. Ask when you book.</p>
       </div>
     </div>
   </section>
@@ -316,8 +317,7 @@
           <h2 class="h-lg">Word gets around.</h2>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <span class="rating-pill"><span class="stars">★★★★★</span>5-star service</span>
-          <a class="btn btn-ghost btn-sm" id="leaveReview" href="#book">Leave a review</a>
+          <a class="btn btn-ghost btn-sm" id="leaveReview" href="#reviews" hidden>Leave us a Google review</a>
         </div>
       </div>
       <div class="reviews" id="reviewList"></div>
@@ -357,7 +357,7 @@
       <div class="section-head reveal">
         <span class="eyebrow">Service areas</span>
         <h2 class="h-lg">Kissimmee and everywhere around it.</h2>
-        <p class="lead">Based in Kissimmee and serving Osceola, Orange and Polk counties. Don't see your town? Text us. We probably come to you too.</p>
+        <p class="lead">Based in Kissimmee and serving Osceola, Orange and Polk counties. No travel fee within about 20 miles of Kissimmee. Farther out, a small travel fee may apply and we tell you before you book. Don't see your town? Text us.</p>
       </div>
       <div class="areas-wrap">
         <div class="areas-card reveal">
@@ -365,7 +365,7 @@
           <p class="muted" style="margin:8px 0 0">Homes, offices, apartment and condo lots (with permission), hotels and vacation rentals.</p>
           <div class="chips" id="areaChips"></div>
           <div class="hero-ctas" style="justify-content:flex-start;margin-top:24px">
-            <a class="btn btn-gold btn-sm" href="#book">Check my address</a>
+            <a class="btn btn-gold btn-sm" href="#book">Book at my address</a>
             <a class="btn btn-ghost btn-sm" data-sms href="sms:+19519070723">Text us your town</a>
           </div>
         </div>
@@ -384,8 +384,8 @@
     <div class="wrap">
       <div class="section-head center reveal">
         <span class="eyebrow">Schedule online</span>
-        <h2 class="h-lg">Book your detail in <span class="display gold-text" style="font-style:italic">under a minute.</span></h2>
-        <p class="lead">Pick your service and a time that suits you. ZR confirms your appointment by text, usually within the hour.</p>
+        <h2 class="h-lg">Request your detail in <span class="display gold-text" style="font-style:italic">under a minute.</span></h2>
+        <p class="lead">Pick a service and a time, then send the request to ZR by text, WhatsApp or email. <b style="color:var(--ink)">Your appointment is booked once ZR texts you to confirm</b>, usually within the hour.</p>
       </div>
 
       <div class="booker reveal" id="booker">
@@ -404,7 +404,7 @@
         </aside>
 
         <div class="bk-main">
-          <div class="bk-steps" id="bkSteps"><span class="is-on">1 · Service</span><span>2 · Date &amp; time</span><span>3 · Your details</span></div>
+          <div class="bk-steps" id="bkSteps"><span class="is-on">1 · Service</span><span>2 · Date &amp; time</span><span>3 · Send request</span></div>
 
           <div class="bk-panel is-on" data-step="1">
             <div class="bk-row">
@@ -432,6 +432,8 @@
               <div>
                 <p class="bk-label" id="slotDay">Pick a day</p>
                 <div class="slots" id="slots"><p>Choose a date to see times.</p></div>
+                <p class="fine" id="slotNote"></p>
+                <p class="fine">Need it today? Same-day is by <a data-tel href="tel:+19519070723" style="color:var(--gold-hi)">call or text</a>.</p>
               </div>
             </div>
             <p class="err" id="err2"></p>
@@ -451,12 +453,26 @@
             <p class="bk-label" style="margin-top:20px">Your request</p>
             <div class="bk-summary" id="bkSummary"></div>
             <p class="bk-label">Send it to ZR your way</p>
+            <p class="fine" style="margin:-4px 0 12px">This opens your own app with the message ready. Press send there. Nothing is booked until ZR texts you back to confirm.</p>
             <div class="send-grid">
               <button class="btn btn-gold" data-send="sms"><svg><use href="#i-msg"/></svg>Send by text</button>
               <button class="btn btn-ghost" data-send="wa"><svg><use href="#i-wa"/></svg>WhatsApp</button>
               <button class="btn btn-ghost" data-send="email"><svg><use href="#i-mail"/></svg>Email</button>
             </div>
             <div class="bk-nav"><button class="btn btn-ghost" data-prev="2">Back</button></div>
+          </div>
+
+          <div class="bk-panel bk-done" data-step="4" aria-live="polite">
+            <span class="done-ic"><svg><use href="#i-check"/></svg></span>
+            <h3 class="h-md" style="font-size:24px;margin:14px 0 8px">Almost done: press send in <span id="doneApp">your app</span>.</h3>
+            <p class="muted" style="margin:0 0 6px">Your request is written and waiting in that app. Once it's sent, ZR will text you to confirm the time and price, usually within the hour.</p>
+            <p class="muted" style="margin:0 0 16px"><b style="color:var(--ink)">Your spot isn't held until ZR confirms.</b> No reply within a few hours? Call or text <a data-tel href="tel:+19519070723" style="color:var(--gold-hi)">(951) 907-0723</a>.</p>
+            <div class="bk-summary" id="doneMsg"></div>
+            <div class="send-grid">
+              <button type="button" class="btn btn-gold" id="doneRetry">App didn't open? Try again</button>
+              <button type="button" class="btn btn-ghost" id="doneCopy">Copy the message</button>
+            </div>
+            <div class="bk-nav"><button class="btn btn-ghost" data-prev="3">Back</button><button class="btn btn-ghost" data-prev="1">New request</button></div>
           </div>
         </div>
       </div>
@@ -486,6 +502,9 @@
         <details><summary>How do I book?</summary><div class="ans"><p>Use the <a href="#book" style="color:var(--gold-hi)">online booking</a> above, call or text <a data-tel href="tel:+19519070723" style="color:var(--gold-hi)">(951) 907-0723</a>, message us on WhatsApp, or comment "BOOK" on any <a href="https://www.instagram.com/zrdetail/" target="_blank" rel="noopener" style="color:var(--gold-hi)">Instagram</a> post. We confirm your time and price by text.</p></div></details>
         <details><summary>What payment methods do you accept?</summary><div class="ans"><p>Cash, card, Zelle, Cash App and Apple Pay. You pay when the job is done and you're happy with it.</p></div></details>
         <details><summary>What if it rains?</summary><div class="ans"><p>Florida afternoon storms happen. Interior work can usually go ahead under a garage or carport. For exterior work in bad weather, we'll text you to move your appointment at no charge.</p></div></details>
+        <details><summary>Can I cancel or reschedule?</summary><div class="ans"><p>Yes. Reschedule or cancel for free up to 24 hours before your appointment by calling or texting <a data-tel href="tel:+19519070723" style="color:var(--gold-hi)">(951) 907-0723</a>. Less than 24 hours' notice, or not being there when we arrive, may mean a small fee for the trip. If weather stops the job, moving it is always free.</p></div></details>
+        <details><summary>Is there a travel fee?</summary><div class="ans"><p>No travel fee within about 20 miles of Kissimmee (Kissimmee, St. Cloud, Celebration, Poinciana, Hunter's Creek, Lake Nona and nearby). For farther towns like Clermont, Haines City or Windermere, a small travel fee may apply. We tell you before you book, never after.</p></div></details>
+        <details><summary>What isn't included?</summary><div class="ans"><p>A detail cleans and protects. It doesn't repair: deep scratches through the clear coat, dents, rock chips, torn upholstery, permanent stains or dye transfer, and sun damage that has cracked the dash. We also don't handle biohazards (bodily fluids, heavy mold) as a standard detail; text us a photo and we'll tell you honestly what we can do. Paint correction and ceramic coating are separate services.</p></div></details>
         <details><summary>Why is my price different from the starting price?</summary><div class="ans"><p>Starting prices are for a vehicle in normal condition. Heavy pet hair, sand, mold, stains or very large vehicles take more time and product. We'll always tell you the final price before we start. No surprises.</p></div></details>
         <details><summary>What's the difference between paint correction and ceramic coating?</summary><div class="ans"><p>Paint correction removes defects: it machine-polishes away swirls, light scratches and oxidation. Ceramic coating protects: it bonds a hard, glossy layer on top so the paint stays cleaner and shinier for longer. Most coated cars are corrected first. Read our <a href="guides/ceramic-coating-vs-wax.html" style="color:var(--gold-hi)">guide</a>.</p></div></details>
         <details><summary>Do you offer a guarantee?</summary><div class="ans"><p>Yes. We walk around the car with you before we leave. If something isn't right, we fix it on the spot.</p></div></details>
@@ -509,7 +528,7 @@
       <div class="guides">
         <a class="guide reveal" href="guides/how-often-detail-car-florida.html"><span class="kicker">Maintenance</span><h3>How often should you detail your car in Florida?</h3><p>Sun, salt air, pollen and sand change the answer. Here's a simple schedule.</p><span class="more">Read guide →</span></a>
         <a class="guide reveal" href="guides/lovebug-removal.html"><span class="kicker">Paint care</span><h3>Lovebug season: how to remove them without hurting your paint</h3><p>Why lovebugs etch clear coat, and what to do (and never do) about it.</p><span class="more">Read guide →</span></a>
-        <a class="guide reveal" href="guides/ceramic-coating-vs-wax.html"><span class="kicker">Protection</span><h3>Ceramic coating vs. sealant vs. wax</h3><p>What each one does, how long it lasts and which is worth it for you.</p><span class="more">Read guide →</span></a>
+        <a class="guide reveal" href="guides/ceramic-coating-vs-wax.html"><span class="kicker">Protection</span><h3>Ceramic coating vs. sealant vs. wax: what's worth it?</h3><p>What each one does, how long it lasts and which is worth it for you.</p><span class="more">Read guide →</span></a>
         <a class="guide reveal" href="guides/prepare-for-mobile-detail.html"><span class="kicker">Before we arrive</span><h3>How to get ready for your mobile detail</h3><p>Five quick things that make your appointment faster and better.</p><span class="more">Read guide →</span></a>
       </div>
     </div>
@@ -565,6 +584,8 @@
           <li><a href="#faq">FAQ</a></li>
           <li><a href="guides/">Guides</a></li>
           <li><a href="#book">Book online</a></li>
+          <li><a href="privacy.html">Privacy</a></li>
+          <li><a href="terms.html">Terms</a></li>
         </ul>
       </div>
       <div>
@@ -578,7 +599,7 @@
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© <span id="yr">2026</span> ZR Mobile Detailing LLC. All rights reserved.</span>
+      <span>© <span id="yr">2026</span> ZR Mobile Detailing LLC. All rights reserved. · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></span>
       <span>Kissimmee · St. Cloud · Celebration · Poinciana · Davenport · Orlando</span>
     </div>
   </div>

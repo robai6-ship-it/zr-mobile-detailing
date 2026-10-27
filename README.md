@@ -15,15 +15,16 @@ Website for **zrmobiledetailing.com**. Plain HTML, CSS and JavaScript: no build 
 
 ## Before going live: confirm with ZR
 
-1. **All prices** in `js/config.js`. Exterior $100, Interior $150 and Full Detail $250 (sedan) are confirmed. Still to confirm: SUV/truck prices, the Gold package and add-ons.
-2. **Hours** (currently "7 days, 7 AM – 7 PM") in `js/config.js` and in `index.html` (search `openingHoursSpecification`).
-3. **FAQ answers** in `index.html`: does he bring his own water and power? Which payment methods (cash, card, Zelle, Cash App, Apple Pay)? Rain policy?
-4. **Reviews:** two are real Instagram comments. The three marked "Sample" must be replaced with real Google reviews (or deleted). Never publish made-up reviews.
-5. **Google review link:** once his Google Business Profile is set up, paste its "ask for reviews" link into `googleReviewUrl`.
+1. **Prices** in `js/config.js`. Confirmed: Exterior $100, Interior $150, Full Detail $250 (sedan). Still to confirm: SUV/truck prices, Gold, add-ons, the paint correction ($350–$900) and ceramic coating ($700–$1,500) ranges, and the maintenance discounts (15% every 2 weeks, 10% every 4 weeks).
+2. **Hours** (7 days, 7 AM – 7 PM) in `js/config.js` (`hours`, `closeHour`) and in `index.html` (search `openingHoursSpecification`). Long services only show start times that finish by closing.
+3. **Policies** (FAQ in `index.html` and `terms.html`): free cancel/reschedule up to 24 hours before, no travel fee within about 20 miles of Kissimmee, what isn't included, payment methods, own water and power, rain policy, 24-hour guarantee window.
+4. **Reviews:** the section is hidden until real reviews are added to `reviews` in `js/config.js`. Never publish made-up reviews.
+5. **Google review link:** once his Google Business Profile is live, paste its "ask for reviews" link into `googleReviewUrl`; the "Leave us a Google review" button then appears.
+6. **Privacy and terms** (`privacy.html`, `terms.html`): plain-language drafts, not legal advice. Have ZR read them.
 
 ## How online booking works
 
-Customers pick a size, service, add-ons, date and time, then enter their name, phone and address. Pressing **Send by text / WhatsApp / Email** opens their phone's app with a ready-made message to ZR. ZR confirms by text. Nothing needs a server or a paid booking tool. (Later, if he wants automatic calendar booking and deposits, it can be swapped for Cal.com or Square Appointments.)
+Customers pick a size, service, add-ons, date and time, then enter their name, phone and address. Pressing **Send by text / WhatsApp / Email** opens their phone's app with a ready-made message to ZR, and the site shows a "press send" screen (with Try again and Copy). The page says clearly that nothing is booked until ZR confirms by text. Nothing needs a server or a paid booking tool. (Later, if he wants automatic calendar booking and deposits, it can be swapped for Cal.com or Square Appointments.)
 
 ## Hero photos
 
@@ -36,7 +37,7 @@ Swap in ZR's own best before/after shots any time (keep the same file names).
 
 ## Where it's hosted
 
-- **Live site:** https://zrmobiledetailing.com (Vercel project `zr-mobile-detailing`, team "rob-gets-it-done"). `www.zrmobiledetailing.com` forwards to it (`vercel.json`).
+- **Live site:** https://zrmobiledetailing.com (Vercel project `zr-mobile-detailing`, team "rob-gets-it-done"). `www.zrmobiledetailing.com` forwards to it (set in Vercel → Domains).
 - **Domain:** bought at Cloudflare (registrar + DNS). Cloudflare DNS has two records, both **DNS only (grey cloud)**:
   - `CNAME  @    eee9355edc52f990.vercel-dns-017.com`
   - `CNAME  www  eee9355edc52f990.vercel-dns-017.com`

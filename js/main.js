@@ -133,21 +133,25 @@
     <div class="prem reveal"><header><h3>${p.name}</h3><span class="from">${p.from}</span></header><p>${p.text}</p><a href="#book" data-pick="${p.id}">Request a quote →</a></div>`).join("");
   $$("[data-pick]", prem).forEach((a) => a.addEventListener("click", () => Booking.pick(a.dataset.pick, sizeIdx)));
 
+  const addonPrice = (a, plus = "") => `${a.note ? a.note + " " : ""}${plus}${money(a.price)}`;
   const addons = $("#addons");
-  if (addons) addons.innerHTML = C.addons.map((a) => `<div><span>${a.name}</span><b>${a.note ? a.note + " " : ""}${money(a.price)}</b></div>`).join("");
+  if (addons) addons.innerHTML = C.addons.map((a) => `<div><span>${a.name}${a.detail ? `<small>${a.detail}</small>` : ""}</span><b>${addonPrice(a)}</b></div>`).join("");
+  const maint = $("#maintNote"); if (maint && C.maintenance) maint.textContent = C.maintenance;
 
   /* ---------- Reviews ---------- */
+  // Only real reviews are shown. With none in config.js the section and its links stay hidden.
+  const reviews = C.reviews.filter((r) => !r.sample);
   const rl = $("#reviewList");
-  if (rl) rl.innerHTML = C.reviews.map((r) => `
-    <figure class="review reveal ${r.sample ? "is-sample" : ""}" style="margin:0">
-      ${r.sample ? `<span class="sample">Sample: replace before launch</span>` : ""}
+  if (!reviews.length) $$('#reviews, [href="#reviews"], [data-reviews-only]').forEach((el) => { el.hidden = true; el.closest("li")?.setAttribute("hidden", ""); });
+  else $$("[data-reviews-only]").forEach((el) => (el.hidden = false));
+  if (rl) rl.innerHTML = reviews.map((r) => `
+    <figure class="review reveal" style="margin:0">
       <span class="stars" aria-label="${r.stars} out of 5 stars">${"★".repeat(r.stars)}</span>
       <p>“${r.text}”</p>
       <footer><span class="av">${r.name.trim()[0]}</span><span>${r.name}</span><span class="src">via ${r.source}</span></footer>
     </figure>`).join("");
   const lr = $("#leaveReview");
-  if (lr && B.googleReviewUrl) { lr.href = B.googleReviewUrl; lr.target = "_blank"; lr.rel = "noopener"; }
-  else if (lr) lr.href = B.instagram, lr.target = "_blank";
+  if (lr && B.googleReviewUrl) { lr.href = B.googleReviewUrl; lr.target = "_blank"; lr.rel = "noopener"; lr.hidden = false; }
 
   /* ---------- Areas ---------- */
   const chips = $("#areaChips");
@@ -171,10 +175,11 @@
     const st = { size: null, service: null, addons: new Set(), date: null, time: null };
     if (!root) return { pick() {} };
     const services = [
-      ...C.packages.map((p) => ({ id: p.id, name: p.name, prices: p.prices, duration: p.duration })),
-      ...C.premium.map((p) => ({ id: p.id, name: p.name, quote: p.from, duration: "Quoted after inspection" })),
+      ...C.packages.map((p) => ({ id: p.id, name: p.name, prices: p.prices, duration: p.duration, hours: p.hours || 0 })),
+      ...C.premium.map((p) => ({ id: p.id, name: p.name, quote: p.from, duration: "Quoted after inspection", hours: p.hours || 0 })),
     ];
     const svc = () => services.find((s) => s.id === st.service);
+    const included = (a) => !!st.service && (a.includedIn || []).includes(st.service);
 
     const opt = (sel, pressed, inner, attrs = "") => `<button type="button" class="opt" aria-pressed="${pressed}" ${attrs}>${inner}</button>`;
     const renderStep1 = () => {
@@ -182,17 +187,26 @@
       $("#bkServices").innerHTML = services.map((s) => opt(0, st.service === s.id,
         `<span><b>${s.name}</b><small>${s.duration}</small></span><span class="amt">${s.prices ? (st.size == null ? "from " + money(s.prices[0]) : money(s.prices[st.size])) : s.quote}</span>`,
         `data-svc="${s.id}"`)).join("");
-      $("#bkAddons").innerHTML = C.addons.map((a) => opt(0, st.addons.has(a.id),
-        `<b>${a.name}</b><span class="amt">+${money(a.price)}</span>`, `data-addon="${a.id}"`)).join("");
-      $$("[data-size]", root).forEach((b) => b.onclick = () => { st.size = +b.dataset.size; update(); });
-      $$("[data-svc]", root).forEach((b) => b.onclick = () => { st.service = b.dataset.svc; update(); });
+      $("#bkAddons").innerHTML = C.addons.map((a) => included(a)
+        ? opt(0, false, `<b>${a.name}</b><span class="amt">Included</span>`, `disabled data-included`)
+        : opt(0, st.addons.has(a.id), `<b>${a.name}</b><span class="amt">${addonPrice(a, "+")}</span>`, `data-addon="${a.id}"`)).join("");
+      $$("[data-size]", root).forEach((b) => b.onclick = () => { st.size = +b.dataset.size; err(1, ""); update(); });
+      $$("[data-svc]", root).forEach((b) => b.onclick = () => { setService(b.dataset.svc); err(1, ""); update(); });
       $$("[data-addon]", root).forEach((b) => b.onclick = () => { const id = b.dataset.addon; st.addons.has(id) ? st.addons.delete(id) : st.addons.add(id); update(); });
+    };
+    // Changing the service drops add-ons it already includes and start times it can't finish by closing.
+    const setService = (id) => {
+      st.service = id;
+      C.addons.forEach((a) => { if (included(a)) st.addons.delete(a.id); });
+      if (st.date && st.time && !daySlots(st.date).includes(st.time)) st.time = null;
+      if (st.date && !daySlots(st.date).length) st.date = null;
+      renderCal(); renderSlots();
     };
 
     const total = () => {
       const s = svc(); if (!s || st.size == null) return null;
       if (!s.prices) return null;
-      return s.prices[st.size] + [...st.addons].reduce((t, id) => t + (C.addons.find((a) => a.id === id)?.price || 0), 0);
+      return s.prices[st.size] + [...st.addons].filter((id) => !included(C.addons.find((a) => a.id === id))).reduce((t, id) => t + (C.addons.find((a) => a.id === id)?.price || 0), 0);
     };
     const whenText = () => st.date ? `${st.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}${st.time ? " at " + st.time : ""}` : null;
 
@@ -219,7 +233,12 @@
       if (ap === "PM" && h !== 12) h += 12; if (ap === "AM" && h === 12) h = 0;
       const x = new Date(d); x.setHours(h, m, 0, 0); return x;
     };
-    const daySlots = (d) => C.timeSlots.filter((s) => slotTime(s, d) - Date.now() > 2 * 3600e3);
+    // A start time is offered if it's 2+ hours away and the chosen service can finish by closing time.
+    const finishBy = (d) => { const x = new Date(d); x.setHours(B.closeHour || 24, 0, 0, 0); return x; };
+    const daySlots = (d) => C.timeSlots.filter((s) => {
+      const t = slotTime(s, d), hrs = svc()?.hours || 0;
+      return t - Date.now() > 2 * 3600e3 && +t + hrs * 3600e3 <= +finishBy(d);
+    });
     const renderCal = () => {
       $("#calMonth").textContent = view.toLocaleDateString("en-US", { month: "long", year: "numeric" });
       $("#calPrev").disabled = view <= new Date(today.getFullYear(), today.getMonth(), 1);
@@ -235,14 +254,17 @@
         html += `<button type="button" ${off ? "disabled" : ""} aria-pressed="${!!sel}" class="${d.getTime() === today.getTime() ? "today" : ""}" data-d="${d.getTime()}" aria-label="${d.toDateString()}">${n}</button>`;
       }
       $("#cal").innerHTML = html;
-      $$("#cal [data-d]").forEach((b) => b.onclick = () => { st.date = new Date(+b.dataset.d); st.time = null; renderCal(); renderSlots(); update(); });
+      $$("#cal [data-d]").forEach((b) => b.onclick = () => { st.date = new Date(+b.dataset.d); st.time = null; err(2, ""); renderCal(); renderSlots(); update(); });
     };
     const renderSlots = () => {
       const box = $("#slots");
-      if (!st.date) { box.innerHTML = "<p>Choose a date to see times.</p>"; return; }
+      const s = svc(), note = $("#slotNote");
+      if (note) note.textContent = s && s.hours >= 3 && B.closeHour
+        ? `${s.name} takes ${s.hours}+ hours, so we only show start times that finish by ${B.closeHour > 12 ? B.closeHour - 12 + " PM" : B.closeHour + " AM"}.` : "";
+      if (!st.date) { $("#slotDay").textContent = "Pick a day"; box.innerHTML = "<p>Choose a date to see times.</p>"; return; }
       $("#slotDay").textContent = st.date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
       box.innerHTML = daySlots(st.date).map((t) => `<button type="button" aria-pressed="${st.time === t}">${t}</button>`).join("");
-      $$("button", box).forEach((b) => b.onclick = () => { st.time = b.textContent; renderSlots(); update(); });
+      $$("button", box).forEach((b) => b.onclick = () => { st.time = b.textContent; err(2, ""); renderSlots(); update(); });
     };
     $("#calPrev").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1); renderCal(); };
     $("#calNext").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1); renderCal(); };
@@ -252,12 +274,12 @@
     const go = (n) => {
       step = n;
       $$(".bk-panel", root).forEach((p) => p.classList.toggle("is-on", +p.dataset.step === n));
-      $$("#bkSteps span").forEach((s, i) => { s.classList.toggle("is-on", i + 1 === n); s.classList.toggle("is-done", i + 1 < n); });
+      $$("#bkSteps span").forEach((s, i) => { s.classList.toggle("is-on", i + 1 === Math.min(n, 3)); s.classList.toggle("is-done", i + 1 < n); });
       if (n === 3) update();
       const top = root.getBoundingClientRect().top;
       if (top < 0) root.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
     };
-    const err = (n, msg) => { $("#err" + n).textContent = msg; return !msg; };
+    function err(n, msg) { const el = $("#err" + n); el.style.color = ""; el.textContent = msg; return !msg; }
     $$("[data-next]", root).forEach((b) => b.onclick = () => {
       const n = +b.dataset.next;
       if (n === 2 && !err(1, st.size == null ? "Choose your vehicle size." : !st.service ? "Choose a service." : "")) return;
@@ -271,7 +293,7 @@
       const s = svc(); const t = total();
       const ad = [...st.addons].map((id) => C.addons.find((a) => a.id === id)?.name);
       const lines = [
-        `Hi ZR! I'd like to book a detail.`,
+        `Hi ZR! I'd like to request a detail. Please confirm if this time works.`,
         ``,
         `Service: ${s ? s.name : "-"}${st.size != null ? " (" + C.sizes[st.size].label + ")" : ""}`,
         ad.length ? `Add-ons: ${ad.join(", ")}` : null,
@@ -287,7 +309,7 @@
       ];
       return lines.filter((l) => l !== null).join("\n");
     }
-    $$("#bkForm input, #bkForm textarea").forEach((el) => el.addEventListener("input", () => { $("#bkSummary").textContent = message(true); }));
+    $$("#bkForm input, #bkForm textarea").forEach((el) => el.addEventListener("input", () => { err(3, ""); $("#bkSummary").textContent = message(true); }));
 
     $$("[data-send]", root).forEach((b) => b.onclick = () => {
       if (!err(3, !v("fName") ? "Add your name." : v("fPhone").replace(/\D/g, "").length < 10 ? "Add a phone number we can text." : !v("fAddr") ? "Add the address where the car will be." : "")) return;
@@ -301,15 +323,22 @@
       } else if (kind === "wa") url = `https://wa.me/${B.whatsapp}?text=${enc}`;
       else url = `mailto:${B.email}?subject=${encodeURIComponent("Booking request: " + (svc()?.name || "Detail"))}&body=${enc}`;
       if (kind === "wa") window.open(url, "_blank", "noopener"); else location.href = url;
-      $("#err3").style.color = "var(--ok)";
-      $("#err3").textContent = "Opening your " + (kind === "sms" ? "messages" : kind === "wa" ? "WhatsApp" : "email") + " app. Just press send. ZR will confirm by text.";
-      setTimeout(() => ($("#err3").style.color = ""), 8000);
+      // Confirmation screen: the request is drafted, not booked, until ZR replies.
+      const app = kind === "sms" ? "your Messages app" : kind === "wa" ? "WhatsApp" : "your email app";
+      $("#doneApp").textContent = app;
+      $("#doneMsg").textContent = body;
+      $("#doneRetry").onclick = () => { if (kind === "wa") window.open(url, "_blank", "noopener"); else location.href = url; };
+      go(4);
+    });
+    $("#doneCopy")?.addEventListener("click", async (e) => {
+      try { await navigator.clipboard.writeText($("#doneMsg").textContent); e.currentTarget.textContent = "Copied"; } catch { e.currentTarget.textContent = "Select the text above to copy"; }
     });
 
     renderCal(); renderSlots(); update();
     return {
+      // From a price card: use the service and the size chosen on the pricing cards.
       pick(id, size) {
-        st.service = id; if (st.size == null) st.size = size; update(); go(1);
+        st.size = size; setService(id); err(1, ""); update(); go(1);
       },
     };
   })();
